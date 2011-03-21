@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuInflater;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.content.Intent;
 
 public class AddressBookActivity extends Activity
 {
@@ -20,5 +22,22 @@ public class AddressBookActivity extends Activity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.contact_menu, menu);
         return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.contact_add:
+            Intent intent = new Intent(this, ContactFormActivity.class);
+            startActivityForResult(intent, 0);
+            return true;
+        case R.id.contact_edit:
+            return true;
+        case R.id.contact_delete:
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
 }
