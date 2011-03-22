@@ -14,6 +14,12 @@ public class ContactFormActivity extends Activity
 {
     private Contact contact = new Contact();
     
+    private EditText fullName;
+    private EditText age;
+    private EditText address;
+    private EditText telephoneNumber;
+    private EditText emailAddress;
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -23,11 +29,14 @@ public class ContactFormActivity extends Activity
         
         Button save = (Button) findViewById(R.id.contact_save);
         
-        final EditText fullName = (EditText) findViewById(R.id.fullName);
-        final EditText age = (EditText) findViewById(R.id.age);
-        final EditText address = (EditText) findViewById(R.id.address);
-        final EditText telephoneNumber = (EditText) findViewById(R.id.telephoneNumber);
-        final EditText emailAddress = (EditText) findViewById(R.id.emailAddress);
+        fullName = (EditText) findViewById(R.id.fullName);
+        age = (EditText) findViewById(R.id.age);
+        address = (EditText) findViewById(R.id.address);
+        telephoneNumber = (EditText) findViewById(R.id.telephoneNumber);
+        emailAddress = (EditText) findViewById(R.id.emailAddress);
+        
+        if (savedInstanceState != null)
+            this.onResumeInstanceState(savedInstanceState);
         
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -69,5 +78,23 @@ public class ContactFormActivity extends Activity
                 finish();
             }
         });
+    }
+    
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState); 
+        outState.putString(Contact.FULL_NAME, fullName.getText().toString());
+        outState.putString(Contact.AGE, age.getText().toString());
+        outState.putString(Contact.ADDRESS, address.getText().toString());
+        outState.putString(Contact.TELEPHONE_NUMBER, telephoneNumber.getText().toString());
+        outState.putString(Contact.EMAIL_ADDRESS, emailAddress.getText().toString());
+    }
+    
+    protected void onResumeInstanceState (Bundle inState) {
+        fullName.setText(inState.getString(Contact.FULL_NAME));
+        age.setText(inState.getString(Contact.AGE));
+        address.setText(inState.getString(Contact.ADDRESS));
+        telephoneNumber.setText(inState.getString(Contact.TELEPHONE_NUMBER));
+        emailAddress.setText(inState.getString(Contact.EMAIL_ADDRESS));
     }
 }

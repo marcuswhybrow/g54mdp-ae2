@@ -204,8 +204,11 @@ public class AddressBookActivity extends Activity
             c = contacts.get(newPosition, null);
         
          
-        if (c != null)
+        if (c != null) {
             this.index = newPosition;
+        } else {
+            Toast.makeText(getApplicationContext(), "Press MENU to Start", Toast.LENGTH_LONG).show();
+        }
         this.populateFields((Contact) c);
         updateMovementButtons();
     }

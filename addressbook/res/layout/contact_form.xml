@@ -79,10 +79,8 @@
         android:layout_alignParentBottom="true">
         <Button
             android:id="@+id/contact_save"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:icon="@android:drawable/ic_menu_save"
             android:text="@string/contact_save"/>
     </LinearLayout>
 </RelativeLayout>
