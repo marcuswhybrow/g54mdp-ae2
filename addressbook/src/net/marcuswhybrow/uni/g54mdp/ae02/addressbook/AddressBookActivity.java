@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import android.provider.BaseColumns;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import android.util.Log;
 
@@ -139,6 +140,7 @@ public class AddressBookActivity extends Activity
                 } else {
                     this.refreshContacts(-1);
                 }
+                Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -156,6 +158,15 @@ public class AddressBookActivity extends Activity
                     if (index >= 0)
                         this.refreshContacts((int) index);
                 }
+                break;
+        }
+        
+        switch (requestCode) {
+            case CONTACT_ADD_CODE:
+                Toast.makeText(getApplicationContext(), "Contact Created", Toast.LENGTH_SHORT).show();
+                break;
+            case CONTACT_EDIT_CODE:
+                Toast.makeText(getApplicationContext(), "Contact Saved", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
