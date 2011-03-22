@@ -37,8 +37,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/nav"
-        android:layout_above="@+id/actions">
+        android:layout_below="@+id/nav">
         
         <LinearLayout
             android:orientation="vertical"
@@ -81,19 +80,5 @@
                 style="@style/data"/>
         </LinearLayout>
     </ScrollView>
-        
-    
-    <LinearLayout
-        android:id="@+id/actions"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="New Contact"/>
-    </LinearLayout>
 </RelativeLayout>
 
