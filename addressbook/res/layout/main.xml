@@ -46,44 +46,39 @@
             android:layout_height="wrap_content">
         
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/label"
                 android:text="Full Name"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/full_name"
+                style="@style/data"/>
         
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/label"
                 android:text="Age"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/age"
+                style="@style/data"/>
         
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/label"
                 android:text="Address"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/address"
+                style="@style/data"/>
         
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/label"
                 android:text="Telephone Number"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/telephone_number"
+                style="@style/data"/>
             
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/label"
                 android:text="Email Address"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/email_address"
+                style="@style/data"/>
         </LinearLayout>
     </ScrollView>
         
