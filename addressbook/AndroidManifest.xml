@@ -4,8 +4,9 @@
       android:versionCode="1"
       android:versionName="1.0">
     <application android:label="@string/app_name" android:icon="@drawable/icon">
-        <activity android:name="AddressBookActivity"
-                  android:label="@string/app_name">
+        <activity
+            android:name="AddressBookActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -14,6 +15,11 @@
         <activity
             android:name="ContactFormActivity"
             android:label="@string/app_contact_form_activity_name">
+            <intent-filter>
+                <action android:name="net.marcuswhybrow.uni.g54mdp.ae02.addressbook.CONTACT_ADD" />
+                <action android:name="net.marcuswhybrow.uni.g54mdp.ae02.addressbook.CONTACT_EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 </manifest> 

@@ -10,11 +10,21 @@ import android.content.Intent;
 import android.content.Context;
 import android.widget.TextView;
 import android.widget.Button;
+import java.util.Map;
+import java.util.Set;
+import android.provider.BaseColumns;
+import android.util.SparseArray;
 
 import android.util.Log;
 
 public class AddressBookActivity extends Activity
 {
+    public static final String CONTACT_ADD = "net.marcuswhybrow.uni.g54mdp.ae02.addressbook.CONTACT_ADD";
+    public static final String CONTACT_EDIT = "net.marcuswhybrow.uni.g54mdp.ae02.addressbook.CONTACT_EDIT";
+    
+    public static final int CONTACT_ADD_CODE = 1;
+    public static final int CONTACT_EDIT_CODE = 2;
+    
     private static Context context = null;
     
     private TextView fullName;
@@ -28,8 +38,8 @@ public class AddressBookActivity extends Activity
     private Button buttonNext;
     private Button buttonLast;
     
-    private Model contacts[];
-    private int position = -1;
+    private SparseArray<Model> contacts;
+    private int index = -1;
     
     public static Context getContext() {
         return context;
@@ -54,16 +64,21 @@ public class AddressBookActivity extends Activity
         
         buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (position + 1 < contacts.length)
-                    populateFields((Contact) contacts[++position]);
+                int i = contacts.indexOfKey(index);
+                if (i + 1 < contacts.size()) {
+                    populateFields((Contact) contacts.valueAt(++i));
+                    index = contacts.keyAt(i);
                     updateMovementButtons();
+                }
             }
         });
         
         buttonPrevious.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (position - 1 >= 0) {
-                    populateFields((Contact) contacts[--position]);
+                int i = contacts.indexOfKey(index);
+                if (i - 1 >= 0) {
+                    populateFields((Contact) contacts.valueAt(--i));
+                    index = contacts.keyAt(i);
                     updateMovementButtons();
                 }
             }
@@ -71,34 +86,27 @@ public class AddressBookActivity extends Activity
         
         buttonFirst.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                position = 0;
-                populateFields((Contact) contacts[position]);
+                index = contacts.keyAt(0);
+                populateFields((Contact) contacts.get(index));
                 updateMovementButtons();
             }
         });
         
         buttonLast.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                position = Math.max(0, contacts.length - 1);
-                populateFields((Contact) contacts[position]);
+                index = contacts.keyAt(Math.max(0, contacts.size() - 1));
+                populateFields((Contact) contacts.get(index));
                 updateMovementButtons();
             }
         });
         
-        // Populate fields
         fullName = (TextView) findViewById(R.id.full_name);
         age = (TextView) findViewById(R.id.age);
         address = (TextView) findViewById(R.id.address);
         telephoneNumber = (TextView) findViewById(R.id.telephone_number);
         emailAddress = (TextView) findViewById(R.id.email_address);
         
-        contacts = Contact.objects.all();
-        
-        if (contacts.length > 0)
-            this.position = 0;
-        
-        Contact contact = (Contact) contacts[0];
-        this.populateFields(contact);
+        this.refreshContacts(-1);
     }
     
     @Override
@@ -113,21 +121,65 @@ public class AddressBookActivity extends Activity
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.contact_add:
-                startActivityForResult(new Intent(this, ContactFormActivity.class), 0);
+                startActivityForResult(new Intent(CONTACT_ADD), CONTACT_ADD_CODE);
                 return true;
             case R.id.contact_edit:
+                Intent intent = new Intent(CONTACT_EDIT);
+                for (Map.Entry entry : (Set<Map.Entry>) contacts.get(index).getFields().entrySet())
+                    intent.putExtra((String) entry.getKey(), entry.getValue().toString());
+                startActivityForResult(intent, CONTACT_EDIT_CODE);
                 return true;
             case R.id.contact_delete:
-                contacts[position].delete();
+                contacts.get(index).delete();
+                int i = contacts.indexOfKey(index);
+                if (i + 1 < contacts.size()) {
+                    this.refreshContacts((int) contacts.keyAt(++i));
+                } else if (i - 1 >= 0) {
+                    this.refreshContacts((int) contacts.keyAt(--i));
+                } else {
+                    this.refreshContacts(-1);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
     
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data); 
+        switch (requestCode) {
+            case CONTACT_ADD_CODE:
+            case CONTACT_EDIT_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    long index = data.getLongExtra(BaseColumns._ID, -1);
+                    if (index >= 0)
+                        this.refreshContacts((int) index);
+                }
+                break;
+        }
+    }
+    
+    private void refreshContacts(int newPosition) {
+        contacts = Contact.objects.all();
+        
+        if (newPosition == -1) {
+            if (contacts.size() > 0) {
+                newPosition = contacts.keyAt(0);
+            }
+        }
+        
+        Model c = contacts.get(newPosition, null);
+        if (c != null) {
+            this.index = newPosition;
+            this.populateFields((Contact) c);
+        }
+        updateMovementButtons();
+    }
+    
     private void updateMovementButtons() {
-        boolean startEnabled = position > 0;
-        boolean endEnabled = position < contacts.length - 1;
+        boolean startEnabled = contacts.indexOfKey(index) > 0;
+        boolean endEnabled = contacts.indexOfKey(index) < contacts.size() - 1;
         
         buttonFirst.setEnabled(startEnabled);
         buttonPrevious.setEnabled(startEnabled);
@@ -136,10 +188,18 @@ public class AddressBookActivity extends Activity
     }
     
     private void populateFields(Contact contact) {
-        fullName.setText(contact.getField(Contact.FULL_NAME));
-        age.setText(contact.getField(Contact.AGE));
-        address.setText(contact.getField(Contact.ADDRESS));
-        telephoneNumber.setText(contact.getField(Contact.TELEPHONE_NUMBER));
-        emailAddress.setText(contact.getField(Contact.EMAIL_ADDRESS));
+        if (contact == null) {
+            fullName.setText("");
+            age.setText("");
+            address.setText("");
+            telephoneNumber.setText("");
+            emailAddress.setText("");
+        } else {
+            fullName.setText(contact.getField(Contact.FULL_NAME));
+            age.setText(contact.getField(Contact.AGE));
+            address.setText(contact.getField(Contact.ADDRESS));
+            telephoneNumber.setText(contact.getField(Contact.TELEPHONE_NUMBER));
+            emailAddress.setText(contact.getField(Contact.EMAIL_ADDRESS));
+        }
     }
 }

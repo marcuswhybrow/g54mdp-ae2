@@ -35,6 +35,10 @@ public class Model {
         return "";
     }
     
+    public Map getFields() {
+        return this.instanceFields;
+    }
+    
     public ModelOpenHelper getOpenHelper() {
         return this.openHelper;
     }

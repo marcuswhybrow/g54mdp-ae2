@@ -3,6 +3,7 @@ package net.marcuswhybrow.uni.g54mdp.ae02.addressbook;
 import android.provider.BaseColumns;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.SparseArray;
 
 import android.util.Log;
 
@@ -19,25 +20,25 @@ public class Manager {
         }
     }
     
-    public Model[] all() {
+    public SparseArray<Model> all() {
         SQLiteDatabase db = model.getOpenHelper().getReadableDatabase();
         Cursor cursor = db.query(
-            model.TABLE_NAME,   // the table name to query
+            model.TABLE_NAME,       // the table name to query
             null,                   // retrieve all columns
             null, null,             // select all rows
             null, null,             // do not group rows
             BaseColumns._ID         // the column to order by
         );
         
-        Model[] objects = new Model[cursor.getCount()];
+        SparseArray<Model> objects = new SparseArray(cursor.getCount());
         cursor.moveToFirst();
-        int count = 0;
+        int idIndex = cursor.getColumnIndex(BaseColumns._ID);
         while (cursor.isAfterLast() == false) {
             try {
                 Model newModel = (Model) cls.newInstance();
                 for (int i = cursor.getColumnCount() - 1; i >= 0; i--)
                     newModel.setField(cursor.getColumnName(i), cursor.getString(i));
-                objects[count++] = newModel;
+                objects.put(cursor.getInt(idIndex), newModel);
             } catch(InstantiationException ie) {}
               catch(IllegalAccessException iae) {}
             cursor.moveToNext();
