@@ -14,22 +14,22 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="First"/>
+            android:text="@string/contact_first"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Prev"/>
+            android:text="@string/contact_previous"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Next"/>
+            android:text="@string/contact_next"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Last"/>
+            android:text="@string/contact_last"/>
     </LinearLayout>
     
     <ScrollView
