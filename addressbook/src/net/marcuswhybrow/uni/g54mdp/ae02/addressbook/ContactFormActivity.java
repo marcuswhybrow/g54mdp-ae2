@@ -27,12 +27,16 @@ public class ContactFormActivity extends Activity
         
         save.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.v("---------------------------------", "save clicked!");
                 Button b = (Button) v;
+                
+                Integer ageInteger = null;
+                try {
+                    ageInteger = new Integer(age.getText().toString());
+                } catch(NumberFormatException nfe) {}
                 
                 Contact contact = new Contact();
                 contact.setField(Contact.FULL_NAME, fullName.getText().toString());
-                contact.setField(Contact.AGE, Integer.parseInt(age.getText().toString()));
+                contact.setField(Contact.AGE, ageInteger);
                 contact.setField(Contact.ADDRESS, address.getText().toString());
                 contact.setField(Contact.TELEPHONE_NUMBER, telephoneNumber.getText().toString());
                 contact.setField(Contact.EMAIL_ADDRESS, emailAddress.getText().toString());

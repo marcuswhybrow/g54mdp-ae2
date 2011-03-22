@@ -13,23 +13,26 @@ import android.util.Log;
 
 public class Model {
     protected static Map<String, Object> fields;
+    private Map<String, Object> instanceFields;
     
     private ModelOpenHelper openHelper;
-    private long pk;
-    private boolean _saved = false;
     
     protected static String TABLE_NAME = "";
     
     public Model() {
         this.openHelper = new ModelOpenHelper(AddressBookActivity.getContext());
+        this.instanceFields = new HashMap<String, Object>();
     }
     
     public void setField(String columnName, Object value) {
-        this.fields.put(columnName, value);
+        this.instanceFields.put(columnName, value);
     }
     
     public String getField(String columnName) {
-        return this.fields.get(columnName).toString();
+        try {
+            return this.instanceFields.get(columnName).toString();
+        } catch (NullPointerException npe) {}
+        return "";
     }
     
     public ModelOpenHelper getOpenHelper() {
@@ -41,7 +44,7 @@ public class Model {
         ContentValues contentValues = new ContentValues();
         String fieldName;
         Object value;
-        for (Map.Entry entry : this.fields.entrySet()) {
+        for (Map.Entry entry : this.instanceFields.entrySet()) {
             fieldName = (String) entry.getKey();
             value = entry.getValue();
             if (value instanceof Integer)
@@ -50,30 +53,26 @@ public class Model {
                 contentValues.put(fieldName, (String) value);
         }
         
-        if (this._saved == false) {
+        if (this.instanceFields.containsKey(BaseColumns._ID) == false) {
             long id = db.insert(TABLE_NAME, null, contentValues);
             
-            Log.v("--------------------------------------", Long.toString(id));
-            
             // id will be -1 if an error occurred
-            if (id > -1) {
-                this.pk = id;
-                this._saved = true;
-            }
+            if (id > -1)
+                this.setField(BaseColumns._ID, id);
         } else {
             String whereClause = BaseColumns._ID + "=?";
-            String[] whereArgs = {Long.toString(this.pk)};
+            String[] whereArgs = {this.instanceFields.get(BaseColumns._ID).toString()};
             db.update(TABLE_NAME, contentValues, whereClause, whereArgs);
         }
         db.close();
     }
     
     public void delete() {
-        if (this._saved) {
+        if (this.instanceFields.containsKey(BaseColumns._ID)) {
             String whereClause = BaseColumns._ID + "=?";
-            String[] whereArgs = {Long.toString(this.pk)};
+            String[] whereArgs = {this.instanceFields.get(BaseColumns._ID).toString()};
             SQLiteDatabase db = this.openHelper.getWritableDatabase();
-            db.delete(TABLE_NAME, whereClause, whereArgs);
+            int result = db.delete(TABLE_NAME, whereClause, whereArgs);
             db.close();
         }
     }

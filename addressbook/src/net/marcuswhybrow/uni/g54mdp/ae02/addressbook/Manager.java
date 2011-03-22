@@ -21,8 +21,6 @@ public class Manager {
     
     public Model[] all() {
         SQLiteDatabase db = model.getOpenHelper().getReadableDatabase();
-        Log.v("----------------------", "Table Name: " + model.TABLE_NAME);
-        Log.v("----------------------", "Order By: " + BaseColumns._ID);
         Cursor cursor = db.query(
             model.TABLE_NAME,   // the table name to query
             null,                   // retrieve all columns
@@ -30,7 +28,6 @@ public class Manager {
             null, null,             // do not group rows
             BaseColumns._ID         // the column to order by
         );
-        Log.v("----------------------", "Rows found: " + Integer.toString(cursor.getCount()));
         
         Model[] objects = new Model[cursor.getCount()];
         cursor.moveToFirst();
@@ -38,9 +35,8 @@ public class Manager {
         while (cursor.isAfterLast() == false) {
             try {
                 Model newModel = (Model) cls.newInstance();
-                for (int i = cursor.getColumnCount() - 1; i > 0; i--) {
+                for (int i = cursor.getColumnCount() - 1; i >= 0; i--)
                     newModel.setField(cursor.getColumnName(i), cursor.getString(i));
-                }
                 objects[count++] = newModel;
             } catch(InstantiationException ie) {}
               catch(IllegalAccessException iae) {}
