@@ -44,7 +44,9 @@
                 android:id="@+id/address"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords|textAutoCorrect"/>
+                android:lines="4"
+                android:gravity="top"
+                android:inputType="textMultiLine|textCapWords|textAutoCorrect"/>
         
             <TextView
                 android:layout_width="fill_parent"

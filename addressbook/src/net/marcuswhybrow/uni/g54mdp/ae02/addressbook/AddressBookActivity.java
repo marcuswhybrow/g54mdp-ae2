@@ -127,7 +127,7 @@ public class AddressBookActivity extends Activity
             case R.id.contact_edit:
                 Intent intent = new Intent(CONTACT_EDIT);
                 for (Map.Entry entry : (Set<Map.Entry>) contacts.get(index).getFields().entrySet())
-                    intent.putExtra((String) entry.getKey(), entry.getValue().toString());
+                    intent.putExtra((String) entry.getKey(), (String) entry.getValue());
                 startActivityForResult(intent, CONTACT_EDIT_CODE);
                 return true;
             case R.id.contact_delete:
@@ -163,10 +163,12 @@ public class AddressBookActivity extends Activity
         
         switch (requestCode) {
             case CONTACT_ADD_CODE:
-                Toast.makeText(getApplicationContext(), "Contact Created", Toast.LENGTH_SHORT).show();
+                if (resultCode == Activity.RESULT_OK)
+                    Toast.makeText(getApplicationContext(), "Contact Created", Toast.LENGTH_SHORT).show();
                 break;
             case CONTACT_EDIT_CODE:
-                Toast.makeText(getApplicationContext(), "Contact Saved", Toast.LENGTH_SHORT).show();
+                if (resultCode == Activity.RESULT_OK)
+                    Toast.makeText(getApplicationContext(), "Contact Saved", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
