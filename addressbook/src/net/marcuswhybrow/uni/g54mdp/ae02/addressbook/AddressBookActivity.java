@@ -118,6 +118,14 @@ public class AddressBookActivity extends Activity
     }
     
     @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        boolean enabled = contacts.size() > 0;
+        menu.findItem(R.id.contact_delete).setEnabled(enabled);
+        menu.findItem(R.id.contact_edit).setEnabled(enabled);
+        return true;
+    }
+    
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
@@ -132,14 +140,24 @@ public class AddressBookActivity extends Activity
                 return true;
             case R.id.contact_delete:
                 contacts.get(index).delete();
-                int i = contacts.indexOfKey(index);
-                if (i + 1 < contacts.size()) {
-                    this.refreshContacts((int) contacts.keyAt(++i));
-                } else if (i - 1 >= 0) {
-                    this.refreshContacts((int) contacts.keyAt(--i));
-                } else {
-                    this.refreshContacts(-1);
-                }
+                
+                // The next array index to show
+                int nextI = -1;
+                // Get the next index to the right
+                nextI = contacts.indexOfKey(index) + 1;
+                
+                // If that is out of bounds try the next index to the left
+                if (nextI > contacts.size() - 1)
+                    nextI -= 2;
+                
+                // If that is out of bounds then go back to -1 (blank all lines)
+                if (nextI < 0)
+                    nextI = -1;
+                
+                int i = nextI == -1 ? -1 : (int) contacts.keyAt(nextI);
+                
+                this.refreshContacts(i);
+                
                 Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
                 return true;
             default:
@@ -176,17 +194,19 @@ public class AddressBookActivity extends Activity
     private void refreshContacts(int newPosition) {
         contacts = Contact.objects.all();
         
+        Model c = null;
         if (newPosition == -1) {
-            if (contacts.size() > 0) {
+            if (contacts.size() > 0)
                 newPosition = contacts.keyAt(0);
-            }
         }
         
-        Model c = contacts.get(newPosition, null);
-        if (c != null) {
+        if (newPosition > -1)
+            c = contacts.get(newPosition, null);
+        
+         
+        if (c != null)
             this.index = newPosition;
-            this.populateFields((Contact) c);
-        }
+        this.populateFields((Contact) c);
         updateMovementButtons();
     }
     
